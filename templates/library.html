@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Plex Duplicate Cleaner - {{ library.title }}</title>
+  </head>
+  <body>
+    <h1>Duplicates in {{ library.title }}</h1>
+    <ul>
+      {% for title, medias in duplicate_media %}
+        <li>
+          <h2>{{ title[0] }} ({{ title[1] }})</h2>
+          <ul>
+            {% for media, score in medias %}
+              <li>
+                {{ media.parts[0].file }} - Score: {{ score }}
+                <form action="{{ url_for('delete') }}" method="post" style="display:inline;">
+                  <input type="hidden" name="media_id" value="{{ media.id }}">
+                  <input type="submit" value="Delete">
+                </form>
+              </li>
+            {% endfor %}
+          </ul>
+        </li>
+      {% endfor %}
+    </ul>
+    <a href="{{ url_for('index') }}">Back to Libraries</a>
+  </body>
+</html>
