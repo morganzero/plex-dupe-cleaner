@@ -1,21 +1,20 @@
 import json
 import os
 import re
-from flask import Flask, request, render_template, redirect, url_for
+from flask import Flask, request, render_template, redirect, url_for, session
 from plexapi.server import PlexServer
 from collections import defaultdict
 
 app = Flask(__name__)
+app.secret_key = 'your_secret_key'  # Replace with a random secret key
 
 def load_config(config_file='config.json'):
     with open(config_file, 'r') as file:
         config = json.load(file)
     return config
 
-def connect_plex(config):
-    baseurl = config['PLEX_SERVER']
-    token = config['PLEX_TOKEN']
-    return PlexServer(baseurl, token)
+def connect_plex(plex_url, plex_token):
+    return PlexServer(plex_url, plex_token)
 
 def list_libraries(plex):
     return plex.library.sections()
@@ -55,15 +54,29 @@ def find_duplicates(library):
 
 @app.route('/')
 def index():
+    if 'plex_url' not in session or 'plex_token' not in session:
+        return redirect(url_for('login'))
+    
     config = load_config()
-    plex = connect_plex(config)
+    plex = connect_plex(session['plex_url'], session['plex_token'])
     libraries = list_libraries(plex)
     return render_template('index.html', libraries=libraries)
 
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        session['plex_url'] = request.form['plex_url']
+        session['plex_token'] = request.form['plex_token']
+        return redirect(url_for('index'))
+    return render_template('login.html')
+
 @app.route('/library/<int:library_id>')
 def library(library_id):
+    if 'plex_url' not in session or 'plex_token' not in session:
+        return redirect(url_for('login'))
+
     config = load_config()
-    plex = connect_plex(config)
+    plex = connect_plex(session['plex_url'], session['plex_token'])
     libraries = list_libraries(plex)
     library = get_library(libraries, library_id)
     duplicates = find_duplicates(library)
@@ -78,8 +91,10 @@ def library(library_id):
 
 @app.route('/delete', methods=['POST'])
 def delete():
-    config = load_config()
-    plex = connect_plex(config)
+    if 'plex_url' not in session or 'plex_token' not in session:
+        return redirect(url_for('login'))
+
+    plex = connect_plex(session['plex_url'], session['plex_token'])
     media_id = request.form['media_id']
     media = plex.fetchItem(media_id)
     media.delete()
