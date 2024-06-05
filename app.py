@@ -1,8 +1,7 @@
 import json
 import os
 import re
-import time
-from flask import Flask, request, render_template, redirect, url_for, session, jsonify
+from flask import Flask, request, render_template, redirect, url_for, session
 from plexapi.myplex import MyPlexAccount
 from plexapi.server import PlexServer
 from collections import defaultdict
@@ -17,7 +16,7 @@ def load_config(config_file='config.json'):
 
 def connect_plex(token):
     account = MyPlexAccount(token)
-    return account.resource("Your Plex Server Name").connect()
+    return account.resource("Your Plex Server Name").connect()  # Replace with your actual Plex server name
 
 def list_libraries(plex):
     return plex.library.sections()
