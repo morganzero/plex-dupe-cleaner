@@ -18,6 +18,11 @@ def load_config(config_file=CONFIG_FILE_PATH):
 
 def connect_plex(token):
     account = MyPlexAccount(token=token)
+    # Print available resources to identify the correct Plex server name
+    resources = account.resources()
+    print("Available resources:")
+    for resource in resources:
+        print(resource.name)
     # Connect to the Plex server using the token
     plex = account.resource("Your Plex Server Name").connect()  # Replace with your actual Plex server name
     return plex
