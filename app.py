@@ -5,6 +5,7 @@ from flask import Flask, request, render_template, redirect, url_for, session
 from plexapi.myplex import MyPlexAccount
 from plexapi.server import PlexServer
 from collections import defaultdict
+import logging
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'  # Replace with a random secret key
@@ -18,11 +19,6 @@ def load_config(config_file=CONFIG_FILE_PATH):
 
 def connect_plex(token):
     account = MyPlexAccount(token=token)
-    # Print available resources to identify the correct Plex server name
-    resources = account.resources()
-    print("Available resources:")
-    for resource in resources:
-        print(resource.name)
     # Connect to the Plex server using the token
     plex = account.resource("Movio Image").connect()  # Replace with your actual Plex server name
     return plex
@@ -57,7 +53,9 @@ def score_file(media, config):
 
 def find_duplicates(library):
     duplicates = defaultdict(list)
+    logging.debug(f"Scanning library: {library.title}")
     for item in library.all():
+        logging.debug(f"Processing item: {item.title} ({item.year})")
         for media in item.media:
             key = (item.title, item.year)
             duplicates[key].append(media)
@@ -117,4 +115,5 @@ def delete():
     return redirect(url_for('index'))
 
 if __name__ == '__main__':
+    logging.basicConfig(level=logging.DEBUG)
     app.run(host='0.0.0.0', port=5000)
