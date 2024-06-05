@@ -9,7 +9,9 @@ from collections import defaultdict
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'  # Replace with a random secret key
 
-def load_config(config_file='config.json'):
+CONFIG_FILE_PATH = '/app/config.json'  # Path to the config file inside the container
+
+def load_config(config_file=CONFIG_FILE_PATH):
     with open(config_file, 'r') as file:
         config = json.load(file)
     return config
