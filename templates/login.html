@@ -7,11 +7,14 @@
   <body>
     <h1>Plex Duplicate Cleaner Login</h1>
     <form method="post">
-      <label for="plex_url">Plex URL:</label><br>
-      <input type="text" id="plex_url" name="plex_url" required><br><br>
-      <label for="plex_token">Plex Token:</label><br>
-      <input type="text" id="plex_token" name="plex_token" required><br><br>
+      <label for="username">Plex Username:</label><br>
+      <input type="text" id="username" name="username" required><br><br>
+      <label for="password">Plex Password:</label><br>
+      <input type="password" id="password" name="password" required><br><br>
       <input type="submit" value="Login">
     </form>
+    {% if error %}
+    <p style="color: red;">{{ error }}</p>
+    {% endif %}
   </body>
 </html>
