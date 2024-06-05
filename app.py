@@ -24,7 +24,7 @@ def connect_plex(token):
     for resource in resources:
         print(resource.name)
     # Connect to the Plex server using the token
-    plex = account.resource("Your Plex Server Name").connect()  # Replace with your actual Plex server name
+    plex = account.resource("Movio Image").connect()  # Replace with your actual Plex server name
     return plex
 
 def list_libraries(plex):
