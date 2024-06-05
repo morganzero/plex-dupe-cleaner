@@ -17,8 +17,10 @@ def load_config(config_file=CONFIG_FILE_PATH):
     return config
 
 def connect_plex(token):
-    # Use the token directly to connect to Plex
-    return PlexServer(token=token)
+    account = MyPlexAccount(token=token)
+    # Connect to the Plex server using the token
+    plex = account.resource("Your Plex Server Name").connect()  # Replace with your actual Plex server name
+    return plex
 
 def list_libraries(plex):
     return plex.library.sections()
